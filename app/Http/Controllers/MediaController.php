@@ -1,0 +1,154 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Media;
+use Illuminate\Http\Request;
+
+class MediaController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $media = Media::all();
+
+        if ($media->count() > 0) {
+            $response = [
+                'message' => "Menampilkan seluruh resource",
+                'data' => $media,
+            ];
+            return response()->json($response, 200);
+        } else {
+            $response = [
+                'message' => "Data is empty"
+            ];
+            return response()->json($response, 200);
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validate = $request->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'description' => 'required',
+            'content' => 'required',
+            'url' => 'required',
+            'url_image' => 'required',
+            'published_at' => 'required',
+            'category' => 'required',
+        ]);
+        $media = Media::create($validate);
+
+        $data = [
+            'message' => "Menampilkan resource yang berhasil ditambahkan",
+            'data' => [
+                'media' => $media,
+            ],
+        ];
+        return response()->json($data, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $media = Media::find($id);
+
+    if ($media) {
+        $response = [
+            'message' => "Menampilkan single resource". $id,
+            'data' => [
+                'media' => $media,
+            ],
+        ];
+        return response()->json($response, 200);
+    } else {
+        $response = [
+            'message' => "Resource not found",
+            'data' => [
+                'media' => $media,
+            ],
+        ];
+        return response()->json($response, 404);
+    }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Media $media)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        $media = Media::find($id);
+
+        if ($media) {
+            $media->update([
+                'title' => $request->title,
+                'author' => $request->author,
+                'description' => $request->description,
+                'content' => $request->content,
+                'url' => $request->url,
+                'url_image' => $request->url_image,
+                'published_at' => $request->published_at,
+                'category' => $request->category,
+            ]);
+            $response = [
+                'message' => "Resource update is successfully",
+                'data' => [
+                    'media' => $media,
+                ],
+            ];
+            return response()->json($response, 200);
+        } else {
+            $response = [
+                'message' => "Resource not found",
+            ];
+            return response()->json($response, 404);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $media = Media::find($id);
+
+        if ($media) {
+            $response = [
+                'message' => "Resource delete is successfully". $id,
+                'data' => [
+                    'media' => $media,
+                ],
+            ];
+            return response()->json($response, 200);
+        } else {
+            $response = [
+                'message' => "Resource not found",
+            ];
+            return response()->json($response, 404);
+        }
+    }
+}
