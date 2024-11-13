@@ -10,6 +10,7 @@ class MediaController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // Menampilkan semua data
     public function index()
     {
         $media = Media::all();
@@ -39,6 +40,7 @@ class MediaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // Menambahkan data
     public function store(Request $request)
     {
         $validate = $request->validate([
@@ -65,13 +67,14 @@ class MediaController extends Controller
     /**
      * Display the specified resource.
      */
+    // Menambahkan data lebih detail
     public function show(string $id)
     {
         $media = Media::find($id);
 
     if ($media) {
         $response = [
-            'message' => "Menampilkan single resource". $id,
+            'message' => "Menampilkan detail resource". $id,
             'data' => [
                 'media' => $media,
             ],
@@ -99,6 +102,8 @@ class MediaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
+    //  Mengupdate data
     public function update(Request $request, string $id)
     {
         $media = Media::find($id);
@@ -132,6 +137,7 @@ class MediaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    // Menghapus data
     public function destroy(string $id)
     {
         $media = Media::find($id);
@@ -150,5 +156,64 @@ class MediaController extends Controller
             ];
             return response()->json($response, 404);
         }
+    }
+
+    public function search(Request $request) { 
+        $title = $request->title; 
+ 
+        $media = Media::where('title', 'LIKE', '%$title%')->get(); 
+ 
+        if ($media->isEmpty()) { 
+            return response()->json([ 
+                'message' => 'Resource Not Found' 
+            ], 404); 
+        } else { 
+            return response()->json([ 
+                'message' => 'Get Searched Resource' 
+            ], 200); 
+        } 
+    }
+
+    // menampilkan category sport
+    public function sport(Request $request) { 
+        $category = $request->category; 
+ 
+        $media = Media::where('category', 'sport')->get(); 
+ 
+        if ($media->isEmpty()) { 
+            return response()->json([ 
+                'message' => 'Data is empty', 
+                'total' => 0 
+            ], 404); 
+        } else { 
+            return response()->json([ 
+                'message' => 'Get Sport Resource', 
+                'count' => $media->count(),  
+                'total' => Media::where('category', 'sport')->count(),  
+                'data' => $media 
+            ], 200); 
+        } 
+    }
+
+    public function finance() 
+    { 
+        // Mengambil category finance 
+        $media = Media::where('category', 'finance')->get(); 
+ 
+        return response()->json([ 
+            'status' => 'Get Finance Resource', 
+            'data' => $media 
+        ], 200); 
+    }
+
+    // Mengambil category automotive
+    public function automotive() 
+    { 
+        $media = Media::where('category', 'automotive')->get(); 
+ 
+        return response()->json([ 
+            'status' => 'Get Finance Resource', 
+            'data' => $media 
+        ], 200); 
     }
 }
